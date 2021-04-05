@@ -292,3 +292,138 @@ console.log('1: Will get location');
     console.log('3: Finshed getting location')
 
 }()
+
+
+/////////////////// YDKJSY PRACTICING //////////////////////////
+const dayStart = "07:30";
+const dayEnd = "17:45";
+let startDayMin = (dayStart.split(':')[0] * 60) + (+dayStart.split(':')[1])
+let endDayMin = (dayEnd.split(':')[0] * 60) + (+dayEnd.split(':')[1])
+
+function scheduleMeeting(startTime, durationMinutes) {
+    let meetingStart = (startTime.split(':')[0] * 60) + (+startTime.split(':')[1])
+    return (meetingStart >= startDayMin) && (endDayMin >= (meetingStart + durationMinutes))
+}
+// console.log(scheduleMeeting("7:00", 15)); // false
+// console.log(scheduleMeeting("07:15", 30)); // false
+// console.log(scheduleMeeting("7:30", 30)); // true
+// console.log(scheduleMeeting("11:30", 60)); // true
+// console.log(scheduleMeeting("17:00", 45)); // true
+// console.log(scheduleMeeting("17:30", 30)); // false
+// console.log(scheduleMeeting("18:00", 15)); // false
+
+function range(start, end) {
+    if (end == 0) return []
+    if (start && end) {
+        if (start == end) return [end]
+        return Array.from({ length: end - start + 1 }, (_, i) => i + start)
+    } else {
+        return function createRangeOfNumber(end) {
+            return Array.from({ length: end - start + 1 }, (_, i) => i + start)
+        }
+    }
+}
+
+// console.log(range(3, 3)) // [3]
+// console.log(range(3, 8)); // [3,4,5,6,7,8]
+// console.log(range(3, 0)); // []
+
+// var start3 = range(3);
+// var start4 = range(4);
+
+// console.log(start3(3)); // [3]
+// console.log(start3(8)); // [3,4,5,6,7,8]
+// console.log(start3(0)); // []
+
+// console.log(start4(6)); // [4,5,6]
+
+function randMax(max) {
+    return Math.trunc(1E9 * Math.random()) % max;
+}
+
+var reel = {
+    symbols: [
+        "♠", "♥", "♦", "♣", "☺", "★", "☾", "☀"
+    ],
+    spin() {
+        if (this.position == null) {
+            this.position = randMax(
+                this.symbols.length - 1
+            );
+        }
+        this.position = (
+            this.position + 100 + randMax(100)
+        ) % this.symbols.length;
+    },
+    display() {
+        if (this.position == null) {
+            this.position = randMax(
+                this.symbols.length - 1
+            );
+        }
+        return this.symbols[this.position];
+    }
+};
+
+
+var slotMachine = {
+    reels: [
+        Object.create(reel),
+        Object.create(reel),
+        Object.create(reel)
+
+        // this slot machine needs 3 separate reels
+        // hint: Object.create(..)
+    ],
+    spin() {
+        this.reels.forEach(function spinReel(reel) {
+            reel.spin();
+        });
+    },
+    display() {
+        var lines = [];
+
+        // display all 3 lines on the slot machine
+        for (let linePos = -1; linePos <= 1; linePos++) {
+
+            let line = this.reels.map(function getSlot(reel) {
+                var slot = Object.create(reel);
+                console.log(slot)
+                slot.position = (
+                    reel.symbols.length +
+                    reel.position +
+                    linePos
+                ) % reel.symbols.length;
+
+
+
+                console.log(
+                    reel.symbols.length, '+', reel.position, '+', linePos,
+                    '|', (reel.symbols.length + reel.position + linePos), '|',
+                    '%', reel.symbols.length,
+                    "result: ", slot.position % reel.symbols.length)
+
+                return slot.display();
+            });
+
+            console.log(line)
+            lines.push(line.join(" | "));
+            console.log(lines)
+        }
+
+        return lines.join("\n");
+    }
+};
+
+
+slotMachine.spin();
+console.log(slotMachine.display());
+// ☾ | ☀ | ★
+// ☀ | ♠ | ☾
+// ♠ | ♥ | ☀
+
+slotMachine.spin();
+console.log(slotMachine.display());
+// ♦ | ♠ | ♣
+// ♣ | ♥ | ☺
+// ☺ | ♦ | ★
